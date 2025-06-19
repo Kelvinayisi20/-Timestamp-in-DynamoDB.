@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Users</title>
+		<script src="https://cdn.tailwindcss.com"></script>
+	</head>
+	<body class="bg-gray-100 p-6">
+		<div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
+			<h1 class="text-2xl font-bold mb-4">User List</h1>
+			<a
+				href="create.html"
+				class="bg-green-500 text-white px-4 py-2 rounded mb-4 inline-block hover:bg-green-600"
+				>+ Register User</a
+			>
+			<table class="w-full border border-gray-200 text-left text-sm">
+				<thead class="bg-gray-100">
+					<tr>
+						<th class="p-2">Full Name</th>
+						<th class="p-2">Email</th>
+						<th class="p-2">Phone</th>
+						<th class="p-2">Role</th>
+						<th class="p-2">Actions</th>
+					</tr>
+				</thead>
+				<tbody id="userList"></tbody>
+			</table>
+		</div>
+		<script type="module">
+			import { getUsers, deleteUser } from './script.js';
+
+			const tbody = document.getElementById('userList');
+
+			async function render() {
+				const users = await getUsers();
+				tbody.innerHTML = '';
+				console.log(users.body);
+				users.body?.forEach((user) => {
+					tbody.innerHTML += `
+          <tr class="border-t">
+            <td class="p-2">${user.fullName}</td>
+            <td class="p-2">${user.email}</td>
+            <td class="p-2">${user.phone}</td>
+            <td class="p-2">${user.role}</td>
+            <td class="p-2 space-x-2">
+              <a href="edit.html?id=${user.id}" class="text-blue-500 hover:underline">Edit</a>
+              <button onclick="handleDelete('${user.id}')" class="text-red-500 hover:underline">Delete</button>
+            </td>
+          </tr>
+        `;
+				});
+			}
+
+			window.handleDelete = async (id) => {
+				if (confirm('Are you sure you want to delete this user?')) {
+					await deleteUser(id);
+					render();
+				}
+			};
+
+			render();
+		</script>
+	</body>
+</html>
